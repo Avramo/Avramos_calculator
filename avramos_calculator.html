@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>clacWithHistory</title>
+    <style>
+        button{
+            width: 60px; height: 60px; font-size: 25pt;
+            background-color: lightskyblue;
+        }
+        .numButton{
+            color: black;
+            background-color: rgb(63, 218, 32);
+        }
+        div{
+            display:table;
+            border:solid 1px; border-color: blue;
+            background-color: #ddd;
+            padding-right: 1px;
+            margin-left: 50px;
+            margin-top: 70px;
+
+            
+        }
+        div > div {
+            font-size: 20pt ; text-align: left;
+            color: black;
+            display:table-row;
+            border:solid 1px; border-color: blue;
+        }
+        #equation{
+            height: 40px;
+            margin: 130px;
+            border: blue solid 1px;
+        }
+    </style>
+</head>
+<body>
+        <span><h1>Avramo's Claculator</span>        
+    <div>
+        <div id="equation" >&nbsp; </div>
+        <div>
+                <button onclick="num_button(7)" class="numButton">7</button>
+                <button onclick="num_button(8)" class="numButton">8</button>
+                <button onclick="num_button(9)" class="numButton">9</button>
+                <button onclick="op_button('+')">+</button>
+        </div>
+        <div>           
+                <button onclick="num_button(4)" class="numButton">4</button>
+                <button onclick="num_button(5)" class="numButton">5</button>
+                <button onclick="num_button(6)" class="numButton">6</button>
+                <button onclick="op_button('-')">-</button>
+        </div>
+        <div>         
+                <button onclick="num_button(1)" class="numButton">1</button>
+                <button onclick="num_button(2)" class="numButton">2</button>
+                <button onclick="num_button(3)" class="numButton">3</button>
+                <button onclick="op_button('*')">*</button>
+        </div>
+        <div>  
+                <button onclick="clearAll()">C</button>
+                <button onclick="num_button(0)" class="numButton">0</button>
+                <button onclick="calc()">=</button>
+                <button onclick="op_button('/')">/</button>
+        </div>
+        <div id="history" >
+            HISTORY
+            <br>
+            <p id="historyText"></p>
+        </div>
+    </div>
+
+    <script>
+        let numz = [];
+        let str_num = '';
+
+        function num_button(num){
+            console.log('num_button start', num)
+            str_num += num;
+            document.getElementById('equation').innerHTML += num
+            console.log('num_button finish ', num)
+        }
+
+        function op_button(oper) {
+            console.log('op_button start ', oper)
+            if (str_num != '') {
+                numz.push(parseInt(str_num))
+            }
+            str_num = ''
+            numz.push(oper)
+            document.getElementById('equation').innerHTML += oper
+            console.log('op_button end ', oper)
+            
+        }
+    
+        function calc(){
+            try{
+            console.log('calc start')
+           
+            numz.push(parseInt(str_num))
+            if (str_num == '' && numz.length != 1) {
+                clearAll()
+                document.getElementById('equation').innerHTML = 'invalid syntax'
+            console.error('calc syntax error user pressed = after operator')
+                return
+            }
+            str_num = ''
+
+            let index = numz.indexOf('*')
+            while (index != -1) {
+                let temp = numz[index - 1] * numz[index + 1]
+                numz[index] = temp
+                numz.splice(index - 1, 1)
+                numz.splice(index, 1)
+                index = numz.indexOf('*') 
+            }
+            
+            index = numz.indexOf('/')
+            while (index != -1) {
+                let temp = numz[index - 1] / numz[index + 1]
+                numz[index] = temp
+                numz.splice(index - 1, 1)
+                numz.splice(index, 1)
+                index = numz.indexOf('/') 
+            }
+
+            index = numz.indexOf('-')
+            while (index != -1) {
+                let temp = numz[index - 1] - numz[index + 1]
+                numz[index] = temp
+                numz.splice(index - 1, 1)
+                numz.splice(index, 1)
+                index = numz.indexOf('-') 
+            }
+
+            index = numz.indexOf('+')
+            while (index != -1) {
+                let temp = numz[index - 1] + numz[index + 1]
+                numz[index] = temp
+                numz.splice(index - 1, 1)
+                numz.splice(index, 1)
+                index = numz.indexOf('+') 
+            }
+
+            document.getElementById('historyText').innerHTML += document.getElementById('equation').innerHTML + ' = ' + numz[0] + '<br/>'
+            document.getElementById('equation').innerHTML = numz[0]
+            console.log('calc end')
+            }catch{
+                console.error('calc error')
+            }
+            
+        }
+
+        function clearAll(){
+            console.log('clearAll start')
+            numz = [];
+            str_num=''
+            document.getElementById('equation').innerHTML = '';
+            console.log('clearAll end')
+
+        }
+    </script>
+</body>
+</html>
